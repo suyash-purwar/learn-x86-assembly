@@ -1,4 +1,4 @@
-.PHONY: clear project_info message
+.PHONY: clear project_info
 
 ASM=nasm
 
