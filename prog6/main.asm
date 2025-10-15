@@ -4,7 +4,12 @@ global _start
 _start:
     MOV al, 0xA
     MOV bl, 0x3
-    MUL bl
+    MUL bl                      ; The resultant value is saved either in AH:AL, DX:AX, EDX:EAX registers depending
+                                ; on the operands size. For example, the multiplication of two 16-bit numbers will
+                                ; yield a 32-bit number. The lower bits of this number will be saved in AX and the higher
+                                ; bits in the DX. The complete number will be read as DX:AX. Similarly, for 32-bit
+                                ; operands, the result will be save using the EDX and EAX registers consuming a total
+                                ; of 64 bits
 
     MOV al, 0xFF                ; -1
     MOV bl, 0x3                 ; 3
@@ -48,5 +53,3 @@ _start:
 
     MOV eax, 0x1                ; Setting to 0x1 to invoke exit syscall
     INT 0x80
-
-; 190 => 0xDE
