@@ -1,22 +1,32 @@
-.PHONY: clear project_info
+.PHONY: all run clean project_info
 
-ASM=nasm
+ASM      := nasm
+ASMFLAGS := -f elf32
+LD       := ld
+LDFLAGS  := -m elf_i386
 
-ifeq ($(PPATH), "")
-	PPATH=.
-endif
+PPATH ?= .
 
-$(PPATH)/main: $(PPATH)/main.o
-	sudo ld -m elf_i386 -o $(PPATH)/main $(PPATH)/main.o
+ASM_FILES := $(wildcard $(PPATH)/*.asm)
+OBJ_FILES := $(ASM_FILES:.asm=.o)
 
-$(PPATH)/main.o: $(PPATH)/main.asm
-	sudo $(ASM) -f elf32 -o $(PPATH)/main.o $(PPATH)/main.asm
+OUT := $(PPATH)/main
 
-run: $(PPATH)/main
-	./$(PPATH)/main
+all: $(OUT)
 
-clear:
-	sudo rm $(PPATH)/*.o $(PPATH)/main
+$(OUT): $(OBJ_FILES)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+%.o: %.asm
+	$(ASM) $(ASMFLAGS) -o $@ $<
+
+run: $(OUT)
+	./$(OUT)
+
+clean:
+	rm -f $(PPATH)/*.o $(OUT)
 
 project_info:
-	@echo Project name: $(PPATH)
+	@echo "Project path: $(PPATH)"
+	@echo "ASM files: $(ASM_FILES)"
+	@echo "OBJ files: $(OBJ_FILES)"
